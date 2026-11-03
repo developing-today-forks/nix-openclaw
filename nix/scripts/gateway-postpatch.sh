@@ -12,6 +12,18 @@ if [ -n "${PATCH_SKIP_PLUGIN_AUTO_ENABLE_NIX_MODE:-}" ]; then
   patch -p1 < "$PATCH_SKIP_PLUGIN_AUTO_ENABLE_NIX_MODE"
 fi
 
+if [ -n "${PATCH_SESSIONS_SPAWN_HEADLESS:-}" ]; then
+  # --fuzz=0 on purpose: the patch names the exact upstream gate it
+  # rewrites, so an upstream bump that moves it must fail this build
+  # loudly rather than ship a gateway without sessions_spawn in
+  # embedded turns (developing-today/code#2257).
+  patch --batch --fuzz=0 -p1 < "$PATCH_SESSIONS_SPAWN_HEADLESS"
+  grep -q "allow-sessions-spawn-headless" src/agents/openclaw-tools.ts || {
+    echo "sessions_spawn headless patch did not land" >&2
+    exit 1
+  }
+fi
+
 if [ -n "${PATCH_NIX_STORE_PLUGIN_OWNERSHIP:-}" ]; then
   ownership_patch="$PATCH_NIX_STORE_PLUGIN_OWNERSHIP"
   if ! grep -q '^function findCandidateBlockIssue(' src/plugins/discovery.ts; then

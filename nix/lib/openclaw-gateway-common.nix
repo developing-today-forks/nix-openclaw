@@ -46,6 +46,7 @@ let
     "applyPublicSurfaceHardlinksPatch"
     "applySkipPluginAutoEnableNixModePatch"
     "applyNixStorePluginOwnershipPatch"
+    "applySessionsSpawnHeadlessPatch"
     "publicSurfaceHardlinksPatch"
     "fsSafeSource"
   ];
@@ -157,6 +158,15 @@ let
     PATCH_NIX_STORE_PLUGIN_OWNERSHIP_DIRECT = "${
       ../patches/allow-nix-store-plugin-ownership-direct.patch
     }";
+    # Carried by the developing-today fork for
+    # developing-today/code#2257: offer sessions_spawn in embedded
+    # (headless/CLI) turns. Off unless the pinned source opts in,
+    # like the other carried patches.
+    PATCH_SESSIONS_SPAWN_HEADLESS =
+      if sourceInfo.applySessionsSpawnHeadlessPatch or false then
+        "${../patches/allow-sessions-spawn-headless.patch}"
+      else
+        "";
     OPENCLAW_RUNTIME_LAYOUT_SH = "${../scripts/openclaw-stage-runtime.sh}";
     PNPM_BUILD_ENV_SH = "${../scripts/pnpm-build-env.sh}";
     RESTORE_PNPM_STORE_SCRIPT = "${../scripts/restore-pnpm-store.mjs}";
