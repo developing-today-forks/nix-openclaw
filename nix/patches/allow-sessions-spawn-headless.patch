@@ -1,0 +1,27 @@
+# sessions_spawn for headless/CLI (embedded) OpenClaw turns.
+#
+# Carried by the packaging in this fork (developing-today/nix-openclaw),
+# NOT an upstream config option: no config key or tool profile feeds
+# the gate. Upstream openclaw-tools.ts offers createSessionsSpawnTool
+# only when `!embedded || options?.allowGatewaySubagentBinding ===
+# true`; `openclaw agent` CLI turns run through the embedded backend,
+# so the tool never reaches a headless/CLI turn's loadable set.
+# This patch drops the embedded exclusion at build time, keeping the
+# option parameter itself untouched.
+#
+# Targets upstream src/agents/openclaw-tools.ts at the pinned rev in
+# nix/sources/openclaw-source.nix (release 2026.10.7). Applied with
+# --fuzz=0 by gateway-postpatch.sh: if an upstream bump moves or
+# changes the gate, the build fails loudly instead of silently
+# shipping an unpatched gateway. Rebase the hunk on every bump.
+--- a/src/agents/openclaw-tools.ts
++++ b/src/agents/openclaw-tools.ts
+@@ -590,7 +590,7 @@
+             config: sessionConfig,
+           }),
+         ]),
+-    !embedded || options?.allowGatewaySubagentBinding === true
++    true // nix-openclaw fork patch (allow-sessions-spawn-headless): sessions_spawn is also offered in embedded (headless/CLI) turns; upstream gates it on !embedded || options?.allowGatewaySubagentBinding === true
+       ? createSessionsSpawnTool({
+           ...options,
+           // Only a keyed parent has a stored incarnation for spawn to check.

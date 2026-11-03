@@ -6,6 +6,7 @@
   applyPublicSurfaceHardlinksPatch = false;
   applySkipPluginAutoEnableNixModePatch = false;
   applyNixStorePluginOwnershipPatch = true;
+  applySessionsSpawnHeadlessPatch = true;
   releaseTag = "v2026.10.7";
   releaseVersion = "2026.10.7";
   runtimePluginVersion = "2026.10.7";
