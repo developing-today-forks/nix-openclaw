@@ -67,6 +67,13 @@ let
         ];
         extraBuildInputs = [ vips ];
         extraEnv = {
+          # The tsdown build refuses to size its heap when the process
+          # cgroup limit is not visible, which is always the case inside
+          # the Nix sandbox ("Stopping before any build output is
+          # removed... set OPENCLAW_TSDOWN_MAX_OLD_SPACE_MB"). Pin an
+          # explicit heap so the source build can run at all; the npm
+          # package path never builds and is unaffected.
+          OPENCLAW_NIX_TSDOWN_MAX_OLD_SPACE_MB = "8192";
           NODE_BIN = "${nodejs_24}/bin/node";
           PATCH_CLIPBOARD_SH = "${../scripts/patch-clipboard.sh}";
           PATCH_CLIPBOARD_WRAPPER = "${../scripts/clipboard-wrapper.cjs}";
