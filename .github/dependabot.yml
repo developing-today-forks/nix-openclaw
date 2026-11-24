@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/nix/npm/openclaw"
+    schedule:
+      interval: "weekly"
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+      all-security:
+        applies-to: "security-updates"
+        patterns:
+          - "*"
